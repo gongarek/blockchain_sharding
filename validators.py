@@ -1,5 +1,6 @@
 from communicator import Communicator
 from beacon import Beacon
+from shard import Shard
 from transaction import Transaction
 from block import Block
 from plot import plot_network
@@ -8,31 +9,23 @@ from copy import deepcopy
 from time import time
 
 
-class Validator:
+class Validator(Shard):
     def __init__(s):
         s.communicator = Communicator()
         s.beacon = Beacon()
-        s.__val_peers_in_shard = {}
-        s.__validators_peers = 2
-        s.__all_val_ids = s.communicator.comm.recv(source=0, tag=1)
+        Shard.__init__(s, 1, s.beacon.get__vali_per_rank())
         s.__transaction_per_block = 20
         s.__tran_max_pay = 300
         s.__max_stake = 4000
         s._shard_blockchain = [Block(None, None, time(), None, None)]   ##tu moze sie zmieni dla publicznych
-        shard_vali_ids = []
-        vali_per_rank = s.beacon.get__vali_per_rank()
-        for i in range((s.communicator.rank - 1) * vali_per_rank, s.communicator.rank * vali_per_rank):
-            shard_vali_ids.append(s.__all_val_ids[i])
-        for node in shard_vali_ids:
-            s.__val_peers_in_shard[node] = sample((set(shard_vali_ids)-{node}), s.__validators_peers)
-        plot_network(s.__val_peers_in_shard, s.communicator.rank)
+        plot_network(s._peers_in_shard, s.communicator.rank)           ### notariusze tego nie maja
     
     """Gettery"""
     def get__vali_peers_in_shard(s):
-        return s.__val_peers_in_shard
+        return s._peers_in_shard
 
     def get__all_val_ids(s):
-        return s.__all_val_ids
+        return s._all_ids
 
     def get__trans_per_block(s):
         return s.__transaction_per_block
@@ -41,41 +34,6 @@ class Validator:
     def shard_blockchain(s):
         return s._shard_blockchain
 
-
-    """ROTACJA VALIDATORIAMI"""
-    def shuffle_validators(s, migrant_ids):
-        # usuwanie perrow poprzez rotowane wezly
-        for m in migrant_ids:
-            del s.__val_peers_in_shard[m]
-        p_o_n = deepcopy(s.__val_peers_in_shard)
-        for peer in p_o_n.items():
-            indexes = []
-            for index, val, in enumerate(peer[1]):
-                if val in migrant_ids:
-                    indexes.append(index)
-            for i in indexes[::-1]:
-                del s.__val_peers_in_shard[peer[0]][i]
-        s.send_recv_migrants(migrant_ids)
-
-    def send_recv_migrants(s, migrant_ids): # tu nie daje do wszystkich tagow, bo sie to zmienia
-        if s.communicator.rank == 1:
-            s.communicator.comm.send(migrant_ids, dest=2)
-            s.supp_peers(s.communicator.comm.recv(source=s.communicator.nbRanks - 1, tag=5))
-        elif s.communicator.rank == (s.communicator.nbRanks-1):
-            s.communicator.comm.send(migrant_ids, dest=1, tag=5)
-            s.supp_peers(s.communicator.comm.recv(source=s.communicator.rank-1))
-        else:
-            s.communicator.comm.send(migrant_ids, dest=s.communicator.rank+1)
-            s.supp_peers(s.communicator.comm.recv(source=s.communicator.rank - 1))
-
-    def supp_peers(s, recv_migrant_id):
-        for i in recv_migrant_id:
-            s.__val_peers_in_shard[i] = []
-        keys = list(s.__val_peers_in_shard.keys())
-        for u in keys:
-            while len(s.__val_peers_in_shard[u]) < s.__validators_peers:
-                s.__val_peers_in_shard[u].append(choice(list(set(keys) - {u} - set(s.__val_peers_in_shard[u]))))
-                
     """TRANSAKCJE"""
     def send_trans_to_beacon(s, nodes_in_shard, node_ids):
         shard_transactions = []
@@ -141,20 +99,20 @@ class Validator:
         
     """receive ids to change"""
     def change_validators_ids(s, change_ids):  # W SUMIE TO SLABE BO ZAMIENIA WEZLAMI ,ALE TAK NAPRAWDE POWINNO BYC USUWANKO I POTEM DOBIOR WEZLOW TAK JAK NA GORZE ROBILEM, ALE JUZ NIE CHCE MI SIE
-        new_val_peers_in_shard = deepcopy(s.__val_peers_in_shard)
+        new_val_peers_in_shard = deepcopy(s._peers_in_shard)
         for key, val in new_val_peers_in_shard.items():
             for change in change_ids:
                 for index, vali in enumerate(val):
                     if vali == change[0]:
-                        s.__val_peers_in_shard[key][index] = change[1]
+                        s._peers_in_shard[key][index] = change[1]
         for key in new_val_peers_in_shard:
             for change in change_ids:
                 if key == change[0]:
-                    s.__val_peers_in_shard[change[1]] = s.__val_peers_in_shard[change[0]]
+                    s._peers_in_shard[change[1]] = s._peers_in_shard[change[0]]
         for change in change_ids:
-            if change[0] in s.__val_peers_in_shard.keys():
-                s.__val_peers_in_shard.pop(change[0])
+            if change[0] in s._peers_in_shard.keys():
+                s._peers_in_shard.pop(change[0])
         for change in change_ids:
-            for index, node in enumerate(s.__all_val_ids):
+            for index, node in enumerate(s._all_ids):
                 if node == change[0]:
-                    s.__all_val_ids[index] = change[1]
+                    s._all_ids[index] = change[1]

@@ -9,7 +9,7 @@ from time import time
 
 class Main:
     def __init__(s):
-        s.__sim_time = 10
+        s.__sim_time = 40
 
     def get__sim_time(s):
         return s.__sim_time
@@ -40,9 +40,9 @@ if __name__ == "__main__":
                 beacon.choose_rotated_validators()
         communicator.comm.barrier()
         if communicator.rank != 0:
-            notarries.shuffle_notarries(communicator.comm.recv(source=0, tag=3))
+            notarries.shuffle_nodes(communicator.comm.recv(source=0, tag=3))
             if tick % 3 == 0:
-                validators.shuffle_validators(communicator.comm.recv(source=0, tag=4))
+                validators.shuffle_nodes(communicator.comm.recv(source=0, tag=4))
             validators.send_trans_to_beacon(list(validators.get__vali_peers_in_shard()), validators.get__all_val_ids())
         communicator.comm.barrier()
         if communicator.rank == 0:
