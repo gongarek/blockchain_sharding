@@ -6,7 +6,6 @@ from random import choice, sample
 
 class Shard:
     def __init__(s, tag, nodes_per_rank):                   ####### 1-walidatorzy 2-notariusze
-        s.beacon = Beacon()
         s.communicator = Communicator()
         s._peers_in_shard = {}
         s._nodes_peers = 2

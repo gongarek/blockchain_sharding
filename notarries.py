@@ -10,8 +10,7 @@ from shard import Shard
 class Nottaries(Shard):
     def __init__(s):
         s.communicator = Communicator()
-        s.beacon = Beacon()
-        Shard.__init__(s, 2, s.beacon.get__notarry_per_rank())
+        Shard.__init__(s, 2, s.communicator.comm.recv(source=0, tag=222))
         s.__availability_stake = 400
 
     """DOSTEPNOSC DANYCH"""

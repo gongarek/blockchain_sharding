@@ -12,8 +12,7 @@ from time import time
 class Validator(Shard):
     def __init__(s):
         s.communicator = Communicator()
-        s.beacon = Beacon()
-        Shard.__init__(s, 1, s.beacon.get__vali_per_rank())
+        Shard.__init__(s, 1, s.communicator.comm.recv(source=0, tag=111))
         s.__transaction_per_block = 20
         s.__tran_max_pay = 300
         s.__max_stake = 4000

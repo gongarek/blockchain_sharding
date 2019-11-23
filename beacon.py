@@ -20,12 +20,6 @@ class Beacon:
         s.__notarry_acc_info = []
         s.__peers_in_beacon = {}
 
-    def get__vali_per_rank(s):
-        return s.__vali_per_rank
-
-    def get__notarry_per_rank(s):
-        return s.__notarry_per_rank
-
     def get__peers_in_beacon(s):
         return s.__peers_in_beacon
 
@@ -38,6 +32,8 @@ class Beacon:
         for rank in range(1, s.communicator.nbRanks):
             s.communicator.comm.send([i["id"] for i in s.__val_acc_info], dest=rank, tag=1)
             s.communicator.comm.send([i["id"] for i in s.__notarry_acc_info], dest=rank, tag=2)
+            s.communicator.comm.send(s.__vali_per_rank, dest=rank, tag=111)
+            s.communicator.comm.send(s.__notarry_per_rank, dest=rank, tag=222)
         plot_network(s.__peers_in_beacon, s.communicator.rank)
 
 
@@ -161,10 +157,6 @@ class Beacon:
                 list_id[index] = new_id
         for i in range(1, s.communicator.nbRanks):
             s.communicator.comm.send(change_ids, dest=i, tag=12)
-
-
-
-
 
 
 
