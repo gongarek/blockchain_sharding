@@ -1,4 +1,3 @@
-from beacon import Beacon
 from communicator import Communicator
 from copy import deepcopy
 from random import choice, sample

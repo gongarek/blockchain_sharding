@@ -1,5 +1,4 @@
 from communicator import Communicator
-from beacon import Beacon
 from shard import Shard
 from transaction import Transaction
 from block import Block

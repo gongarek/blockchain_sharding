@@ -1,5 +1,4 @@
 from communicator import Communicator
-from beacon import Beacon
 from block import Block
 from random import choice, random, sample
 from copy import deepcopy
