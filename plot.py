@@ -7,7 +7,7 @@ from communicator import Communicator
 def plot_network(peers_shard, rank):
     comm = Communicator()
     g = nx.Graph()
-    plt.figure(figsize=(5, 5))
+    plt.figure(figsize=(15, 15))
     # plt.axis('off')
     fig = plt.gcf()
     if rank == 0:

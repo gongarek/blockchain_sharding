@@ -5,11 +5,12 @@ from communicator import Communicator
 from plot import plot_network
 from plot import plot_transaction_shard
 from time import time
+import csv
 
 
 class Main:
     def __init__(s):
-        s.__sim_time = 40
+        s.__sim_time = 2
 
     def get__sim_time(s):
         return s.__sim_time
@@ -19,7 +20,7 @@ if __name__ == "__main__":
     main = Main()
     communicator = Communicator()
     # import pydevd
-    # port_mapping = [45465, 35159, 46103, 43695]
+    # port_mapping = [46877, 42985, 37251, 40053]
     # pydevd.settrace('localhost', port=port_mapping[communicator.rank], stdoutToServer=True, stderrToServer=True)
 
     if communicator.comm.rank == 0:
@@ -29,10 +30,10 @@ if __name__ == "__main__":
     if communicator.comm.rank != 0:
         validators = Validator()
         notarries = Nottaries()
-        time_list = []
-        if communicator.rank == 1:
-            start_time = time()
-            transactions_nb = []
+    if communicator.rank == 1:
+        time_list = [0]
+        transactions_nb = [0]
+        gg = True
     for tick in range(main.get__sim_time()):
         if communicator.rank == 0:
             beacon.choose_rotated_notarries()
@@ -74,12 +75,20 @@ if __name__ == "__main__":
             validators.change_validators_ids(communicator.comm.recv(source=0, tag=11))
             notarries.change_notarries_ids(communicator.comm.recv(source=0, tag=12))
             if communicator.rank == 1:
+                if gg == True:
+                    start_time = time()
+                    gg = False
                 time_list.append(time()-start_time)
                 transactions_nb.append(tick*validators.get__trans_per_block()*communicator.nbRanks)
         communicator.comm.barrier()
     if communicator.rank == 0:
-        plot_network(beacon.get__peers_in_beacon(), communicator.rank)
+        pass
+        # plot_network(beacon.get__peers_in_beacon(), communicator.rank)
     else:
-        plot_network(validators.get__vali_peers_in_shard(), communicator.rank)
+        # plot_network(validators.get__vali_peers_in_shard(), communicator.rank)
         if communicator.rank == 1:
+            with open('skalowalnosc.csv', mode='w') as skalowalnosc:
+                employee_writer = csv.writer(skalowalnosc, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+                for i in zip(time, transactions_nb):
+                    skalowalnosc = csv.writerow(list(i))
             plot_transaction_shard(time_list,transactions_nb)

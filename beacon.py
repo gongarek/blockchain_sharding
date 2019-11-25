@@ -9,11 +9,11 @@ class Beacon:
         s.communicator = Communicator()
         s.__interval_no_nottaries = 1000
         s.__interval_notarries = 10000
-        s.__nodes_per_beacon = 10
-        s.__vali_per_rank = 6
+        s.__nodes_per_beacon = 100
+        s.__vali_per_rank = 80
         s.__notarry_per_rank = 6
         s.__beacon_peers = 3
-        s.__nb_val_migrates = 2
+        s.__nb_val_migrates = 4
         s.__nb_notarry_migrates = 2
         s.__start_money = 100
         s.__val_acc_info = []

@@ -6,13 +6,14 @@ from plot import plot_network
 from random import choice, random, sample
 from copy import deepcopy
 from time import time
+import csv
 
 
 class Validator(Shard):
     def __init__(s):
         s.communicator = Communicator()
         Shard.__init__(s, 1, s.communicator.comm.recv(source=0, tag=111))
-        s.__transaction_per_block = 20
+        s.__transaction_per_block = 75                  ### 75 moze byc maksymalnie NIE WIECEJ
         s.__tran_max_pay = 300
         s.__max_stake = 4000
         s._shard_blockchain = [Block(None, None, time(), None, None)]   ##tu moze sie zmieni dla publicznych
