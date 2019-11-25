@@ -87,8 +87,8 @@ if __name__ == "__main__":
     else:
         # plot_network(validators.get__vali_peers_in_shard(), communicator.rank)
         if communicator.rank == 1:
-            with open('skalowalnosc.csv', mode='w') as skalowalnosc:
-                employee_writer = csv.writer(skalowalnosc, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-                for i in zip(time, transactions_nb):
-                    skalowalnosc = csv.writerow(list(i))
+            # with open('skalowalnosc.csv', mode='w') as skalowalnosc:
+            #     employee_writer = csv.writer(skalowalnosc, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+            #     for i in zip(time, transactions_nb):
+            #         skalowalnosc = csv.writerow(list(i))
             plot_transaction_shard(time_list,transactions_nb)
