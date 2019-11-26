@@ -36,15 +36,15 @@ if __name__ == "__main__":
         gg = True
     for tick in range(main.get__sim_time()):
         if communicator.rank == 0:
-            if tick % 5 == 0:
-                beacon.choose_rotated_notarries()
             if tick % 10 == 0:
+                beacon.choose_rotated_notarries()
+            if tick % 25 == 0:
                 beacon.choose_rotated_validators()
         # communicator.comm.barrier()
         if communicator.rank != 0:
-            if tick % 5 == 0:
+            if tick % 10  == 0:
                 notarries.shuffle_nodes(communicator.comm.recv(source=0, tag=3))
-            if tick % 10 == 0:
+            if tick % 25 == 0:
                 validators.shuffle_nodes(communicator.comm.recv(source=0, tag=4))
             validators.send_trans_to_beacon(list(validators.get__vali_peers_in_shard()), validators.get__all_val_ids())
         # communicator.comm.barrier()

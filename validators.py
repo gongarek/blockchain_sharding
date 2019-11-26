@@ -13,9 +13,9 @@ class Validator(Shard):
     def __init__(s):
         s.communicator = Communicator()
         Shard.__init__(s, 1, s.communicator.comm.recv(source=0, tag=111))
-        s.__transaction_per_block = 100               ### 127 transakcji w bloku. tyle wyszlo z danych. daje mniej bo potem beacon wysyla jeszcze innym
-        s.__tran_max_pay = 300
-        s.__max_stake = 40000
+        s.__transaction_per_block = 1100               ### 127 transakcji w bloku. tyle wyszlo z danych. daje mniej bo potem beacon wysyla jeszcze innym
+        s.__tran_max_pay = 200
+        s.__max_stake = 400000
         s._shard_blockchain = [Block(None, None, time(), None, None)]   ##tu moze sie zmieni dla publicznych
         # plot_network(s._peers_in_shard, s.communicator.rank)           ### notariusze tego nie maja
     
@@ -65,7 +65,7 @@ class Validator(Shard):
         return next(block for block in ramification if block.get__time() == early)
     
     def approve_block(s, correct_block, nodes_in_shard):
-        sleep(3)
+        sleep(1)
         hostility = random()
         if hostility < 0.5:
             s._shard_blockchain.append(correct_block)
