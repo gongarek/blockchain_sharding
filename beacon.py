@@ -9,9 +9,9 @@ class Beacon:
         s.communicator = Communicator()
         s.__interval_no_nottaries = 1000
         s.__interval_notarries = 10000
-        s.__nodes_per_beacon = 100
-        s.__vali_per_rank = 80
-        s.__notarry_per_rank = 6
+        s.__nodes_per_beacon = 300
+        s.__vali_per_rank = 200         ###w eth mowia ze 150 wezlow wystarczy
+        s.__notarry_per_rank = 200
         s.__beacon_peers = 3
         s.__nb_val_migrates = 4
         s.__nb_notarry_migrates = 2
@@ -34,7 +34,7 @@ class Beacon:
             s.communicator.comm.send([i["id"] for i in s.__notarry_acc_info], dest=rank, tag=2)
             s.communicator.comm.send(s.__vali_per_rank, dest=rank, tag=111)
             s.communicator.comm.send(s.__notarry_per_rank, dest=rank, tag=222)
-        plot_network(s.__peers_in_beacon, s.communicator.rank)
+        # plot_network(s.__peers_in_beacon, s.communicator.rank)
 
 
     def create_val_account_info(s):

@@ -10,7 +10,7 @@ import csv
 
 class Main:
     def __init__(s):
-        s.__sim_time = 3
+        s.__sim_time = 10
 
     def get__sim_time(s):
         return s.__sim_time
@@ -36,13 +36,15 @@ if __name__ == "__main__":
         gg = True
     for tick in range(main.get__sim_time()):
         if communicator.rank == 0:
-            beacon.choose_rotated_notarries()
-            if tick % 3 == 0:
+            if tick % 5 == 0:
+                beacon.choose_rotated_notarries()
+            if tick % 10 == 0:
                 beacon.choose_rotated_validators()
         # communicator.comm.barrier()
         if communicator.rank != 0:
-            notarries.shuffle_nodes(communicator.comm.recv(source=0, tag=3))
-            if tick % 3 == 0:
+            if tick % 5 == 0:
+                notarries.shuffle_nodes(communicator.comm.recv(source=0, tag=3))
+            if tick % 10 == 0:
                 validators.shuffle_nodes(communicator.comm.recv(source=0, tag=4))
             validators.send_trans_to_beacon(list(validators.get__vali_peers_in_shard()), validators.get__all_val_ids())
         # communicator.comm.barrier()
@@ -87,8 +89,9 @@ if __name__ == "__main__":
     else:
         # plot_network(validators.get__vali_peers_in_shard(), communicator.rank)
         if communicator.rank == 1:
-            # with open('skalowalnosc.csv', mode='w') as skalowalnosc:
-            #     employee_writer = csv.writer(skalowalnosc, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-            #     for i in zip(time, transactions_nb):
-            #         skalowalnosc = csv.writerow(list(i))
-            plot_transaction_shard(time_list,transactions_nb)
+            with open('3.csv', 'a') as fd:
+                writer = csv.writer(fd)
+                for i in range(len(time_list)):
+                    writer.writerow([time_list[i], transactions_nb[i]])
+            print(transactions_nb[-1]/time_list[-1])
+            # plot_transaction_shard(time_list,transactions_nb)
