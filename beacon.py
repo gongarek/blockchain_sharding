@@ -30,10 +30,11 @@ class Beacon:
         s.create_val_account_info()
         s.create_notarry_account_info()
         for rank in range(1, s.communicator.nbRanks):
-            s.communicator.comm.send([i["id"] for i in s.__val_acc_info], dest=rank, tag=1)
-            s.communicator.comm.send([i["id"] for i in s.__notarry_acc_info], dest=rank, tag=2)
             s.communicator.comm.send(s.__vali_per_rank, dest=rank, tag=111)
             s.communicator.comm.send(s.__notarry_per_rank, dest=rank, tag=222)
+            s.communicator.comm.send([i["id"] for i in s.__val_acc_info], dest=rank, tag=1)
+            s.communicator.comm.send([i["id"] for i in s.__notarry_acc_info], dest=rank, tag=2)
+
         # plot_network(s.__peers_in_beacon, s.communicator.rank)
 
 
