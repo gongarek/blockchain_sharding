@@ -13,8 +13,8 @@ class Validator(Shard):
     def __init__(s):
         s.communicator = Communicator()
         Shard.__init__(s, 1, s.communicator.comm.recv(source=0, tag=111))
-        s.__transaction_per_block = 1100               ### 127 transakcji w bloku. tyle wyszlo z danych. daje mniej bo potem beacon wysyla jeszcze innym
-        s.__tran_max_pay = 200
+        s.__transaction_per_block = 500               ### 127 transakcji w bloku. tyle wyszlo z danych. daje mniej bo potem beacon wysyla jeszcze innym
+        s.__tran_max_pay = 100
         s.__max_stake = 400000
         s._shard_blockchain = [Block(None, None, time(), None, None)]   ##tu moze sie zmieni dla publicznych
         # plot_network(s._peers_in_shard, s.communicator.rank)           ### notariusze tego nie maja
@@ -47,6 +47,7 @@ class Validator(Shard):
     def crate_ramification(s, nodes_in_shard, blockchain):
         ramification = []
         finally_transactions = s.communicator.comm.recv(source=0, tag=7)  # TE TRANSAKCJE SA DOBRE.
+        # print(len(finally_transactions))
         money_in_block = 0
         for tran in finally_transactions:
             money_in_block += tran.amount
@@ -56,7 +57,7 @@ class Validator(Shard):
             block = Block(finally_transactions, blockchain[-1].get__block_id(), time(), staker, stake)
             block.create_tree()
             ramification.append(block)
-            if random() < 0.5:  # randomowo tworzone sa rozgalezienia, czyli nowe bloki.Dobre, sa zle czasy
+            if random() < 0.4:  # randomowo tworzone sa rozgalezienia, czyli nowe bloki.Dobre, sa zle czasy
                 break
         return ramification
 
@@ -65,9 +66,9 @@ class Validator(Shard):
         return next(block for block in ramification if block.get__time() == early)
     
     def approve_block(s, correct_block, nodes_in_shard):
-        sleep(1)
+        sleep(1)          # wczesniej bylo 1.5
         hostility = random()
-        if hostility < 0.5:
+        if hostility < 0.8:
             s._shard_blockchain.append(correct_block)
         else:
             money_in_block = 0

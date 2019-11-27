@@ -29,21 +29,21 @@ if __name__ == "__main__":
     #communicator.comm.barrier()
     if communicator.comm.rank != 0:
         validators = Validator()
-        notarries = Nottaries()
+      #  notarries = Nottaries()
     if communicator.rank == 1:
         time_list = [0]
         transactions_nb = [0]
         gg = True
     for tick in range(main.get__sim_time()):
         if communicator.rank == 0:
-            if tick % 10 == 0:
-                beacon.choose_rotated_notarries()
+     #       if tick % 10 == 0:
+     #           beacon.choose_rotated_notarries()
             if tick % 25 == 0:
                 beacon.choose_rotated_validators()
         # communicator.comm.barrier()
         if communicator.rank != 0:
-            if tick % 10  == 0:
-                notarries.shuffle_nodes(communicator.comm.recv(source=0, tag=3))
+     #       if tick % 10  == 0:
+     #           notarries.shuffle_nodes(communicator.comm.recv(source=0, tag=3))
             if tick % 25 == 0:
                 validators.shuffle_nodes(communicator.comm.recv(source=0, tag=4))
             validators.send_trans_to_beacon(list(validators.get__vali_peers_in_shard()), validators.get__all_val_ids())
@@ -68,14 +68,14 @@ if __name__ == "__main__":
         # communicator.comm.barrier()
         if communicator.rank == 0:
             beacon.burn_stake_bad_commit_availability(8)
-            beacon.burn_stake_notarry()
+  #          beacon.burn_stake_notarry()
             beacon.burn_stake_bad_commit_availability(10)
             beacon.remove_indebted_validators()
-            beacon.remove_indebted_notarries()
+  #          beacon.remove_indebted_notarries()
         # communicator.comm.barrier()
         if communicator.rank != 0:
             validators.change_validators_ids(communicator.comm.recv(source=0, tag=11))
-            notarries.change_notarries_ids(communicator.comm.recv(source=0, tag=12))
+   #         notarries.change_notarries_ids(communicator.comm.recv(source=0, tag=12))
             if communicator.rank == 1:
                 if gg == True:
                     start_time = time()
@@ -89,9 +89,9 @@ if __name__ == "__main__":
     else:
         # plot_network(validators.get__vali_peers_in_shard(), communicator.rank)
         if communicator.rank == 1:
-            with open('3.csv', 'a') as fd:
+            with open('10.csv', 'a') as fd:
                 writer = csv.writer(fd)
                 for i in range(len(time_list)):
                     writer.writerow([time_list[i], transactions_nb[i]])
-            print(transactions_nb[-1]/time_list[-1])
+            print(time_list[-1])
             # plot_transaction_shard(time_list,transactions_nb)
